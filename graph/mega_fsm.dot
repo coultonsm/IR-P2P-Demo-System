@@ -1,0 +1,34 @@
+digraph MEGA_FSM {
+    label="Arduino MEGA — FSM State Diagram"
+    labelloc="t"
+    fontname="Helvetica"
+    fontsize=16
+    rankdir=TB
+    node [shape=rectangle, style=rounded, fontname="Helvetica", fontsize=12]
+    edge [fontname="Helvetica", fontsize=10]
+
+    // Start node
+    START [label="START", shape=circle, style=filled, fillcolor=black, fontcolor=white, width=0.4]
+
+    // States
+    LOCAL_SENSE [label="LOCAL_SENSE\nRead DHT11\n(temperature + humidity)"]
+    IR_COMM     [label="IR_COMM\nStage 1: Server role\n(serve temp + humidity to UNO)"]
+    IR_COMM2    [label="IR_COMM2\nStage 2: Client role\n(request light value from UNO)"]
+    SUMMARY     [label="SUMMARY\nPrint all sensor values\nto serial"]
+
+    // Initial transition
+    START -> LOCAL_SENSE
+
+    // LOCAL_SENSE
+    LOCAL_SENSE -> IR_COMM [label="always"]
+
+    // IR_COMM (Stage 1 - server)
+    IR_COMM -> IR_COMM2    [label="CMD_REQUEST received,\ntemp + humidity served,\nCMD_ACK received"]
+    IR_COMM -> LOCAL_SENSE [label="timeout\n(no CMD_REQUEST)"]
+
+    // IR_COMM2 (Stage 2 - client)
+    IR_COMM2 -> SUMMARY    [label="light value received\n(success or timeout)"]
+
+    // SUMMARY
+    SUMMARY -> LOCAL_SENSE [label="always"]
+}

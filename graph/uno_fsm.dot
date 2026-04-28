@@ -1,0 +1,57 @@
+digraph UNO_FSM {
+    label="UNO R4 — FSM State Diagram"
+    labelloc="t"
+    fontname="Helvetica"
+    fontsize=16
+    rankdir=TB
+    node [shape=rectangle, style=rounded, fontname="Helvetica", fontsize=12]
+    edge [fontname="Helvetica", fontsize=10]
+
+    // Start node
+    START [label="START", shape=circle, style=filled, fillcolor=black, fontcolor=white, width=0.4]
+
+    // States
+    LOCAL_SENSE  [label="LOCAL_SENSE\nRead light sensor (analog)"]
+    IR_COMM      [label="IR_COMM\nStage 1: Client role\n(get temp + humidity from MEGA)"]
+    IR_COMM2     [label="IR_COMM2\nStage 2: Server role\n(send light value to MEGA)"]
+    SUMMARY      [label="SUMMARY\nPrint all sensor values\nto serial"]
+    THINK        [label="THINK\nCheck events,\nupdate timers"]
+    GET_REQUEST  [label="GET_REQUEST\nListen for WiFi\nclient registration"]
+    PARSE_REQUEST [label="PARSE_REQUEST\nParse + process\nregistration message"]
+    SEND_RESPONSE [label="SEND_RESPONSE\nSend notification\nto registered client"]
+    ACT          [label="ACT\nEvaluate event +\ndecide action"]
+
+    // Initial transition
+    START -> LOCAL_SENSE
+
+    // LOCAL_SENSE
+    LOCAL_SENSE -> IR_COMM [label="always"]
+
+    // IR_COMM (Stage 1 - client)
+    IR_COMM -> IR_COMM2  [label="CMD_ACK + temp\n+ humidity received"]
+    IR_COMM -> SUMMARY   [label="timeout\n(skip IR_COMM2)"]
+
+    // IR_COMM2 (Stage 2 - server)
+    IR_COMM2 -> SUMMARY  [label="always\n(success or timeout)"]
+
+    // SUMMARY
+    SUMMARY -> THINK [label="always"]
+
+    // THINK
+    THINK -> ACT         [label="clientRequest == true"]
+    THINK -> GET_REQUEST [label="clientRequest == false"]
+
+    // GET_REQUEST
+    GET_REQUEST -> PARSE_REQUEST [label="connection received\n+ data available"]
+    GET_REQUEST -> LOCAL_SENSE   [label="no connection\nor already registered"]
+
+    // PARSE_REQUEST
+    PARSE_REQUEST -> LOCAL_SENSE [label="always\n(reply sent, socket closed)"]
+
+    // ACT
+    ACT -> SEND_RESPONSE [label="event matches\nregistration +\nreadyToFire"]
+    ACT -> LOCAL_SENSE   [label="event mismatch\nor not ready"]
+
+    // SEND_RESPONSE
+    SEND_RESPONSE -> LOCAL_SENSE [label="always"]
+}

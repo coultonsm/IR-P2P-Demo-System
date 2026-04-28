@@ -1,0 +1,28 @@
+msc {
+  hscale = "1.5";
+
+  UNO [label="UNO"], MEGA [label="MEGA"];
+
+  --- [label="Stage 1 — DHT sensor"];
+  UNO -> MEGA [label="CMD_REQ"];
+  MEGA -> UNO [label="CMD_ACK"];
+  UNO -> MEGA [label="CMD_TEMP"];
+  MEGA -> UNO [label="temperature value"];
+  UNO -> MEGA [label="CMD_HUMID"];
+  MEGA -> UNO [label="humidity value"];
+  UNO -> MEGA [label="CMD_ACK"];
+  --- [label="end of connection"];
+  
+  |||;
+  |||;
+
+  --- [label="Stage 2 — Light sensor"];
+  MEGA -> UNO [label="CMD_REQ"];
+  UNO -> MEGA [label="CMD_ACK"];
+  MEGA -> UNO [label="CMD_LIGHT"];
+  UNO -> MEGA [label="higher 2 bits"];
+  MEGA -> UNO [label="CMD_ACK"];
+  UNO -> MEGA [label="lower 8 bits"];
+  MEGA -> UNO [label="CMD_ACK"];
+  --- [label="end of communication"];
+}
