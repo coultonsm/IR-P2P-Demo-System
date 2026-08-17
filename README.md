@@ -1,5 +1,5 @@
 # Infrared Point to Point Demo System
-This project was created for my final project in Internet of Things at Clark University.
+This project was created for my final in Internet of Things at Clark University.
 
 It implements a simple protocol seen below to exchange sensor information between two different Arduino platforms.
 
@@ -21,3 +21,6 @@ Below is a diagram of the implementation of the protocol for the UNO board / hea
 ### Arduino MEGA (Sensor-only child node)
 Below is a diagram of the implementation of the protocol for the MEGA board / child node. It reports its own sensor information and gets light sensor readings from the UNO.
 <img width="428" height="694" alt="mega_fsm" src="https://github.com/user-attachments/assets/04e0ff90-60a5-414b-a4b3-a7f729ea0f0c" />
+
+## Presentation & Demo Video
+https://www.youtube.com/watch?v=3OmpZed7EbA
